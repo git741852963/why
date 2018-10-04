@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- datasources -->
+	<!--<bean id="dataSource" class="DynamicDataSource">-->
+		<!--<property name="targetDataSources">-->
+			<!--<map key-type="java.lang.String">-->
+				<!--&lt;!&ndash; write &ndash;&gt;-->
+				<!--<entry key="master" value-ref="masterDataSource" />-->
+				<!--&lt;!&ndash; read &ndash;&gt;-->
+				<!--<entry key="slave" value-ref="slaveDataSource" />-->
+			<!--</map>-->
+		<!--</property>-->
+		<!--<property name="defaultTargetDataSource" ref="masterDataSource" />-->
+	<!--</bean>-->
+
+	<!-- master datasource -->
+	<!--<bean id="masterDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">-->
+		<!--<property name="driverClassName" value="${jdbc.datasource.driverClassName}" />-->
+		<!--<property name="url" value="${jdbc.master.url}" />-->
+		<!--<property name="username" value="${jdbc.master.username}" />-->
+		<!--<property name="password" value="${jdbc.master.password}" />-->
+		<!--&lt;!&ndash; 最大连接数据库连接数 &ndash;&gt;-->
+		<!--<property name="maxActive" value="${jdbc.datasource.maxActive}" />-->
+		<!--&lt;!&ndash; 最大等待连接中的数量 0标识没有限制 &ndash;&gt;-->
+		<!--<property name="maxIdle" value="${jdbc.datasource.maxIdle}" />-->
+		<!--&lt;!&ndash; 最大等待毫秒数 超时报错 &ndash;&gt;-->
+		<!--<property name="maxWait" value="${jdbc.datasource.maxWait}" />-->
+		<!--&lt;!&ndash; 是否自动提交 &ndash;&gt;-->
+		<!--<property name="defaultAutoCommit" value="${jdbc.datasource.defaultAutoCommit}" />-->
+		<!--&lt;!&ndash; 是否自我中断 &ndash;&gt;-->
+		<!--<property name="removeAbandoned" value="${jdbc.datasource.removeAbandoned}" />-->
+		<!--&lt;!&ndash; 验证连接是否成功的查询SQL语句 &ndash;&gt;-->
+		<!--<property name="validationQuery" value="${jdbc.datasource.validationQuery}" />-->
+		<!--&lt;!&ndash; 检查对象是否有效 &ndash;&gt;-->
+		<!--<property name="testOnBorrow" value="${jdbc.datasource.testOnBorrow}" />-->
+	<!--</bean>-->
+
+	<!-- slave datasource -->
+	<!--<bean id="slaveDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">-->
+		<!--<property name="driverClassName" value="${jdbc.datasource.driverClassName}" />-->
+		<!--<property name="url" value="${jdbc.slave.url}" />-->
+		<!--<property name="username" value="${jdbc.slave.username}" />-->
+		<!--<property name="password" value="${jdbc.slave.password}" />-->
+		<!--&lt;!&ndash; 最大连接数据库连接数 &ndash;&gt;-->
+		<!--<property name="maxActive" value="${jdbc.datasource.maxActive}" />-->
+		<!--&lt;!&ndash; 最大等待连接中的数量 0标识没有限制 &ndash;&gt;-->
+		<!--<property name="maxIdle" value="${jdbc.datasource.maxIdle}" />-->
+		<!--&lt;!&ndash; 最大等待毫秒数 超时报错 &ndash;&gt;-->
+		<!--<property name="maxWait" value="${jdbc.datasource.maxWait}" />-->
+		<!--&lt;!&ndash; 是否自动提交 &ndash;&gt;-->
+		<!--<property name="defaultAutoCommit" value="${jdbc.datasource.defaultAutoCommit}" />-->
+		<!--&lt;!&ndash; 是否自我中断 &ndash;&gt;-->
+		<!--<property name="removeAbandoned" value="${jdbc.datasource.removeAbandoned}" />-->
+		<!--&lt;!&ndash; 验证连接是否成功的查询SQL语句 &ndash;&gt;-->
+		<!--<property name="validationQuery" value="${jdbc.datasource.validationQuery}" />-->
+		<!--&lt;!&ndash; 检查对象是否有效 &ndash;&gt;-->
+		<!--<property name="testOnBorrow" value="${jdbc.datasource.testOnBorrow}" />-->
+	<!--</bean>-->
+
+	<!-- mycat datasource -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.datasource.driverClassName}" />
+		<property name="url" value="${jdbc.master.url}" />
+		<property name="username" value="${jdbc.master.username}" />
+		<property name="password" value="${jdbc.master.password}" />
+		<!-- 最大连接数据库连接数 -->
+		<property name="maxActive" value="${jdbc.datasource.maxActive}" />
+		<!-- 最大等待连接中的数量 0标识没有限制 -->
+		<property name="maxIdle" value="${jdbc.datasource.maxIdle}" />
+		<!-- 最大等待毫秒数 超时报错 -->
+		<property name="maxWait" value="${jdbc.datasource.maxWait}" />
+		<!-- 是否自动提交 -->
+		<property name="defaultAutoCommit" value="${jdbc.datasource.defaultAutoCommit}" />
+		<!-- 是否自我中断 -->
+		<property name="removeAbandoned" value="${jdbc.datasource.removeAbandoned}" />
+		<!-- 验证连接是否成功的查询SQL语句 -->
+		<property name="validationQuery" value="${jdbc.datasource.validationQuery}" />
+		<!-- 检查对象是否有效 -->
+		<property name="testOnBorrow" value="${jdbc.datasource.testOnBorrow}" />
+	</bean>
+
+	<!-- mybatis session factory -->
+	<bean id="sqlSessionFactory" class="com.neusoft.features.db.mybatis.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocations" value="classpath*:/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/*.xml" />
+		<!-- mybatis plugins -->
+		<property name="plugins">
+			<array>
+				<bean class="com.neusoft.features.db.mybatis.plugin.GeneratedValuePlugin" />
+			</array>
+		</property>
+		<!-- 现在单独在每个mybatis-config.xml中配置settings有问题（SqlSessionFactoryBean），在此处加载配置 -->
+		<!-- 目前仅支持简单类型属性注入 -->
+		<property name="configurationProperties">
+			<props>
+				<!--启用或禁用缓存-->
+				<prop key="cacheEnabled">true</prop>
+				<!--启用或禁用 延迟加载。当禁用时, 所有关联对象都会即时加载-->
+				<prop key="lazyLoadingEnabled">true</prop>
+				<!--设置超时时间，它决定驱动等待一个数据库响应的时间-->
+				<prop key="defaultStatementTimeout">25000</prop>
+				<!--设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指 定)，不会加载关联表的所有字段，以提高性能-->
+				<prop key="aggressiveLazyLoading">false</prop>
+				<!--对于未知的SQL查询，允许返回不同的结果集以达到通用的效果-->
+				<prop key="multipleResultSetsEnabled">true</prop>
+				<!--允许使用列标签代替列名-->
+				<prop key="useColumnLabel">true</prop>
+				<!--允许使用自定义的主键值(比如由程序生成的UUID 32位编码作为键值)，数据表的PK生成策略将被覆盖-->
+				<prop key="useGeneratedKeys">true</prop>
+				<!--给予被嵌套的resultMap以字段-属性的映射支持-->
+				<!--<prop key="autoMappingBehavior">FULL</prop>-->
+				<!--对于批量更新操作缓存SQL以提高性能-->
+				<!--<prop key="defaultExecutorType">BATCH</prop>-->
+				<!--设置log前缀-->
+				<prop key="logPrefix">aj4g.</prop>
+				<!--设置log输出方式-->
+				<!--<prop key="logImpl">STDOUT_LOGGING</prop>-->
+			</props>
+		</property>
+	</bean>
+
+	<!-- database aop -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<bean id="manyDataSourceAspect" class="com.neusoft.features.db.DataSourceAspect"/>
+	<aop:config proxy-target-class="true">
+		<!-- 数据源切面：数据源切换控制在Service层,并且执行顺序要在事务切面之前执行 -->
+		<aop:aspect id="dataSourceSeparation" ref="manyDataSourceAspect">
+			<aop:pointcut id="dataSourceSeparationPointcut" expression="execution(public * com.neusoft.dxz.module.*.service.*.*(..))"/>
+			<aop:before pointcut-ref="dataSourceSeparationPointcut" method="before"/>
+		</aop:aspect>
+	</aop:config>
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- @Transactional支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+
+</beans>

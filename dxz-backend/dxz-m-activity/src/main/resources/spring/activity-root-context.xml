@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- config共同配置 -->
+	<import resource="classpath:/spring/config-core-context.xml" />
+	<!-- config共同配置-Module -->
+	<import resource="classpath:/spring/config-module-context.xml" />
+	<!-- config共同配置-持久化 -->
+	<import resource="classpath:/spring/config-persistence-context.xml" />
+	<!-- module 配置 -->
+	<import resource="classpath:/spring/activity-module-context.xml" />
+	<!-- dubbo provider -->
+	<import resource="classpath:/spring/activity-dubbo-provider.xml" />
+	<!-- dubbo consumer -->
+	<import resource="classpath:/spring/activity-dubbo-consumer.xml" />
+</beans>

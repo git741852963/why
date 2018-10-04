@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/cache
+	http://www.springframework.org/schema/cache/spring-cache.xsd
+	http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<!-- component scan -->
+	<context:component-scan base-package="com.neusoft.features" />
+
+	<!-- 国际化消息资源 -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>i18n/messages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+
+	<!-- jsr 303 validator -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<!--<property name="validationMessageSource" ref="messageSource"></property>-->
+		<property name="validationPropertyMap">
+			<map>
+				<entry key="hibernate.validator.fail_fast" value="true"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- fluent validator message support -->
+	<!--<bean id="messageSupport" class="com.baidu.unbiz.fluentvalidator.support.MessageSupport">-->
+		<!--<property name="messageSource" ref="messageSource"/>-->
+	<!--</bean>-->
+
+	<!--<bean id="pathMatchingResourcePatternResolver" class="org.springframework.core.io.support.PathMatchingResourcePatternResolver"></bean>-->
+	<!--<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">-->
+		<!--<property name="basenames">-->
+			<!--<list>-->
+				<!--<value>classpath*:i18n/messages</value>-->
+			<!--</list>-->
+		<!--</property>-->
+		<!--<property name="resourceLoader" ref="pathMatchingResourcePatternResolver"/>-->
+		<!--<property name="cacheSeconds" value="3600"/>-->
+		<!--&lt;!&ndash;<property name="useCodeAsDefaultMessage" value="true"/>&ndash;&gt;-->
+		<!--<property name="defaultEncoding" value="UTF-8"/>-->
+	<!--</bean>-->
+
+	<!-- load properties files -->
+	<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath*:/config/*.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<property name="properties" ref="configProperties" />
+	</bean>
+
+	<!-- service log aspect -->
+	<!--<aop:config proxy-target-class="true">-->
+		<!--<aop:aspect id="servicelogAOP" ref="logAspect">-->
+			<!--<aop:pointcut id="ServiceLogPointCut"-->
+						  <!--expression="execution(public * com.neusoft.dxz.module.*.service.*.*(..))" />-->
+			<!--<aop:around method="MethodCallLog" pointcut-ref="ServiceLogPointCut" />-->
+		<!--</aop:aspect>-->
+	<!--</aop:config>-->
+
+	<!-- elastic search config -->
+	<!--<bean id="searchClientFactory" class="com.neusoft.dxz.core.search.SearchClientFactory"-->
+		<!--destroy-method="close">-->
+		<!--&lt;!&ndash; client settings &ndash;&gt;-->
+		<!--<property name="settings">-->
+			<!--<map>-->
+				<!--<entry key="cluster.name" value="${es.cluster.name}" />-->
+				<!--&lt;!&ndash; 是否只作为客户端，即不存储索引数据，默认值为false &ndash;&gt;-->
+				<!--<entry key="node.client" value="${es.node.client}" />-->
+				<!--&lt;!&ndash; 是否持有索引数据，默认值为true &ndash;&gt;-->
+				<!--<entry key="node.data" value="${es.node.data}" />-->
+				<!--&lt;!&ndash; 是否为本地节点，本地节点是指在JVM级别中的同级 默认值true &ndash;&gt;-->
+				<!--<entry key="node.local" value="${es.node.local}" />-->
+			<!--</map>-->
+		<!--</property>-->
+		<!--&lt;!&ndash; node config &ndash;&gt;-->
+		<!--<property name="nodes">-->
+			<!--<set>-->
+				<!--<bean class="com.google.common.net.HostAndPort">-->
+					<!--<constructor-arg name="host" value="${es.server00.address}" />-->
+					<!--<constructor-arg name="port" value="${es.server00.port}" />-->
+					<!--<constructor-arg name="hasBracketlessColons" value="false" />-->
+				<!--</bean>-->
+				<!--<bean class="com.google.common.net.HostAndPort">-->
+					<!--<constructor-arg name="host" value="${es.server01.address}" />-->
+					<!--<constructor-arg name="port" value="${es.server01.port}" />-->
+					<!--<constructor-arg name="hasBracketlessColons" value="false" />-->
+				<!--</bean>-->
+				<!--<bean class="com.google.common.net.HostAndPort">-->
+					<!--<constructor-arg name="host" value="${es.server02.address}" />-->
+					<!--<constructor-arg name="port" value="${es.server02.port}" />-->
+					<!--<constructor-arg name="hasBracketlessColons" value="false" />-->
+				<!--</bean>-->
+			<!--</set>-->
+		<!--</property>-->
+	<!--</bean>-->
+
+	<!-- memcached config -->
+	<!--<bean id="memcachedSockIOPool" class="com.whalin.MemCached.SockIOPool"-->
+		<!--factory-method="getInstance" init-method="initialize" destroy-method="shutDown">-->
+		<!--<constructor-arg>-->
+			<!--<value>memCachedPool</value>-->
+		<!--</constructor-arg>-->
+		<!--<property name="servers">-->
+			<!--<list>-->
+				<!--<value>${memcached.server00.address}</value>-->
+			<!--</list>-->
+		<!--</property>-->
+		<!--<property name="initConn">-->
+			<!--<value>${memcached.pool.initConn}</value>-->
+		<!--</property>-->
+		<!--<property name="maxConn">-->
+			<!--<value>${memcached.pool.maxConn}</value>-->
+		<!--</property>-->
+		<!--<property name="maintSleep">-->
+			<!--<value>${memcached.pool.maintSleep}</value>-->
+		<!--</property>-->
+		<!--<property name="nagle">-->
+			<!--<value>${memcached.pool.nagle}</value>-->
+		<!--</property>-->
+		<!--<property name="socketTO">-->
+			<!--<value>${memcached.pool.socketTO}</value>-->
+		<!--</property>-->
+	<!--</bean>-->
+	<!--<bean id="memcachedClient" class="com.whalin.MemCached.MemCachedClient">-->
+		<!--<constructor-arg>-->
+			<!--<value>memCachedPool</value>-->
+		<!--</constructor-arg>-->
+	<!--</bean>-->
+
+	<!-- scheduler 支持 -->
+	<task:annotation-driven />
+
+	<!-- 异步线程池 -->
+	<bean id="threadPool" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<!-- 核心线程数 -->
+		<property name="corePoolSize" value="${thread.pool.corePoolSize}" />
+		<!-- 最大线程数 -->
+		<property name="maxPoolSize" value="${thread.pool.maxPoolSize}" />
+		<!-- 队列最大长度 >=mainExecutor.maxSize -->
+		<property name="queueCapacity" value="${thread.pool.queueCapacity}" />
+		<!-- 线程池维护线程所允许的空闲时间 -->
+		<property name="keepAliveSeconds" value="${thread.pool.keepAliveSeconds}" />
+		<!-- 线程池对拒绝任务(无线程可用)的处理策略 -->
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
+	</bean>
+
+	<beans profile="pre">
+		<!-- jedis pool config -->
+		<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+			<property name="maxIdle" value="${redis.pool.maxIdle}" />
+			<property name="maxTotal" value="${redis.pool.maxTotal}" />
+			<property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}" />
+			<property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
+		</bean>
+
+		<!-- jedis standalone mode, without auth -->
+		<!--<bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">-->
+			<!--<constructor-arg ref="jedisPoolConfig" />-->
+			<!--<constructor-arg value="${redis.host}" type="java.lang.String"/>-->
+			<!--<constructor-arg type="int" value="${redis.port}" />-->
+		<!--</bean>-->
+
+		<!-- jedis standalone mode, with auth -->
+		<bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+			<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+			<constructor-arg name="host" value="${redis.host}" />
+			<constructor-arg name="port" value="${redis.port}" type="int" />
+			<constructor-arg name="timeout" value="${redis.pool.timeout}" type="int" />
+			<constructor-arg name="password" value="${redis.password}" />
+		</bean>
+
+		<bean id="jedisTemplate" class="com.neusoft.features.redis.utils.JedisTemplate">
+			<constructor-arg index="0" ref="jedisPool"/>
+		</bean>
+	</beans>
+
+	<beans profile="dev,uat,prod">
+		<!-- jedis pool config -->
+		<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+			<property name="maxIdle" value="${redis.pool.maxIdle}" />
+			<property name="maxTotal" value="${redis.pool.maxTotal}" />
+			<property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}" />
+			<property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
+		</bean>
+
+		<!-- jedis cluster mode, used on dev/prepub/prod mode -->
+		<!-- jedis cluster 加入连接密码 -->
+		<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster"
+			  destroy-method="close">
+			<constructor-arg name="jedisClusterNode">
+				<set>
+					<bean class="redis.clients.jedis.HostAndPort">
+						<constructor-arg name="host" value="${redis.server00.address}" />
+						<constructor-arg name="port" value="${redis.server00.port}" />
+					</bean>
+					<bean class="redis.clients.jedis.HostAndPort">
+						<constructor-arg name="host" value="${redis.server10.address}" />
+						<constructor-arg name="port" value="${redis.server10.port}" />
+					</bean>
+					<bean class="redis.clients.jedis.HostAndPort">
+						<constructor-arg name="host" value="${redis.server20.address}" />
+						<constructor-arg name="port" value="${redis.server20.port}" />
+					</bean>
+					<bean class="redis.clients.jedis.HostAndPort">
+						<constructor-arg name="host" value="${redis.server01.address}" />
+						<constructor-arg name="port" value="${redis.server01.port}" />
+					</bean>
+					<bean class="redis.clients.jedis.HostAndPort">
+						<constructor-arg name="host" value="${redis.server11.address}" />
+						<constructor-arg name="port" value="${redis.server11.port}" />
+					</bean>
+					<bean class="redis.clients.jedis.HostAndPort">
+						<constructor-arg name="host" value="${redis.server21.address}" />
+						<constructor-arg name="port" value="${redis.server21.port}" />
+					</bean>
+				</set>
+			</constructor-arg>
+
+			<!--不使用密码 -->
+			<!--<constructor-arg name="timeout" value="${redis.pool.timeout}" />-->
+			<!--<constructor-arg name="poolConfig" ref="jedisPoolConfig" />-->
+
+			<!--加入连接密码 -->
+			<constructor-arg name="connectionTimeout" value="${redis.cluster.timeout}" />
+			<constructor-arg name="soTimeout" value="${redis.cluster.soTimeout}" />
+			<constructor-arg name="maxAttempts" value="${redis.cluster.maxAttempts}" />
+			<constructor-arg name="password" value="${redis.cluster.password}" />
+			<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+		</bean>
+	</beans>
+
+</beans>

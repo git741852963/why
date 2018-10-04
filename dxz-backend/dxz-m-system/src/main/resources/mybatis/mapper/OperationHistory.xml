@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.op-history">
+
+    <sql id="columns">
+        operation_date, user_id, user_name, operation, path, is_success, param, result, is_delete, create_at, update_at
+    </sql>
+    <sql id="summary_columns">
+        operation_date, user_id, user_name, operation, path, is_success, param, result, is_delete, create_at, update_at
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="java.util.Map" flushCache="true">
+        insert into demo_system_operation_log (
+        <include refid="columns"/>
+        ) values(
+        #{date},
+        #{userId},
+        #{userName},
+        #{operation},
+        #{path},
+        #{isSuccess},
+        #{param},
+        #{returnValue},
+        0,
+        now(),
+        now()
+        )
+    </insert>
+
+    <insert id="insert-simple" useGeneratedKeys="true" parameterType="java.util.Map" flushCache="true">
+        insert into demo_system_operation_log (
+        <include refid="columns"/>
+        ) values(
+        #{date},
+        #{returnValue},
+        0,
+        now(),
+        now()
+        )
+    </insert>
+
+    <select id="count" parameterType="CommonDto" resultType="long">
+        SELECT COUNT(1)
+        FROM demo_system_operation_log log
+        WHERE 1 = 1
+        AND is_delete = 0
+        <if test="flexibleData.userName!=null and flexibleData.userName!=''">
+            AND user_name like concat('%',#{flexibleData.userName},'%')
+        </if>
+        <if test="flexibleData.type!=null">
+            AND log.is_success = #{flexibleData.type}
+        </if>
+        <if test="flexibleData.startAt!=null and flexibleData.startAt!=''">
+            AND log.operation_date >= #{flexibleData.startAt}
+        </if>
+        <if test="flexibleData.endAt!=null and flexibleData.endAt!=''">
+            AND #{flexibleData.endAt} >= log.operation_date
+        </if>
+        <if test="flexibleData.operation!=null and flexibleData.operation!=''">
+            AND operation like concat('%',#{flexibleData.operation},'%')
+        </if>
+    </select>
+
+    <select id="find" parameterType="CommonDto" resultType="java.util.HashMap">
+        SELECT id, <include refid="summary_columns"/>
+        FROM demo_system_operation_log log
+        WHERE 1 = 1
+        AND is_delete = 0
+        <if test="flexibleData.userName!=null and flexibleData.userName!=''">
+            AND user_name like concat('%',#{flexibleData.userName},'%')
+        </if>
+        <if test="flexibleData.type!=null">
+            AND log.is_success = #{flexibleData.type}
+        </if>
+        <if test="flexibleData.startAt!=null and flexibleData.startAt!=''">
+            AND log.operation_date >= #{flexibleData.startAt}
+        </if>
+        <if test="flexibleData.endAt!=null and flexibleData.endAt!=''">
+            AND #{flexibleData.endAt} >= log.operation_date
+        </if>
+        <if test="flexibleData.operation!=null and flexibleData.operation!=''">
+            AND operation like concat('%',#{flexibleData.operation},'%')
+        </if>
+        ORDER BY log.operation_date DESC
+        limit #{pageInfo.offset}, #{pageInfo.limit}
+    </select>
+
+</mapper>

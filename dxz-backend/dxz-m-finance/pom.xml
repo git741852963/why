@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016 aj4g -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.neusoft</groupId>
+        <artifactId>dxz</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>${module.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <packaging>jar</packaging>
+    <name>${module.artifactId}</name>
+
+    <properties>
+        <module.artifactId>dxz-m-finance</module.artifactId>
+        <module.shortName>finance</module.shortName>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-configuration</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-trade-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baidu.unbiz</groupId>
+            <artifactId>fluent-validator</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${module.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <filters>
+            <filter>src/main/filters/${build.env}.properties</filter>
+        </filters>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>make-${module.shortName}-dubbo-service</id>
+            <activation>
+                <property>
+                    <name>dubbo.enabled</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>appassembler-maven-plugin</artifactId>
+                        <configuration>
+                            <daemons>
+                                <daemon>
+                                    <id>dubbo-${module.shortName}-service</id>
+                                    <mainClass>com.neusoft.dxz.module.${module.shortName}.Bootstrap</mainClass>
+                                </daemon>
+                            </daemons>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>../jsw-zip.xml</descriptor>
+                            </descriptors>
+                            <finalName>${module.artifactId}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

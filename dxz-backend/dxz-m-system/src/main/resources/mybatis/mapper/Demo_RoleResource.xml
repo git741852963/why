@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.roleResource">
+
+	<resultMap id="RoleResultMap" type="RoleResource">
+		<id property="id" column="id" />
+		<result property="roleId" column="role_id" />
+		<result property="resourceId" column="resource_id" />
+		<result property="isDelete" column="is_delete" />
+		<result property="createAt" column="create_at" />
+		<result property="updateAt" column="update_at" />
+	</resultMap>
+
+	<resultMap id="ResRoleMap" type="NameValuePair">
+		<result property="name" column="uri" />
+		<result property="value" column="roles" />
+	</resultMap>
+
+	<sql id="columns">
+		role_id, resource_id, is_delete, create_at, update_at
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="RoleResource">
+		insert into demo_system_role_resource (
+			<include refid="columns"/>
+		)
+		values(
+			#{roleId},
+			#{resourceId},
+			#{isDelete},
+			#{createAt},
+			#{updateAt}
+		)
+	</insert>
+
+	<update id="update" parameterType="RoleResource">
+		update demo_system_role_resource
+		set
+		is_delete=#{isDelete},
+		update_at=#{updateAt},
+		summary=#{summary},
+		description=#{description},
+		role_id=#{roleId},
+		resource_id=#{resourceId}
+		where
+		role_resource_id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="CommonDto">
+		update demo_system_role_resource
+		set is_delete = 1
+		where 1=1
+		<if test="flexibleData.role_resource_id!=null">
+			and role_resource_id=#{flexibleData.roleresourceId}
+		</if>
+		<if test="flexibleData.roleId!=null">
+			and role_id=#{flexibleData.roleId}
+		</if>
+		<if test="flexibleData.resourceId!=null">
+			and resource_id=#{flexibleData.resourceId}
+		</if>
+	</delete>
+
+	<select id="findByCondition" parameterType="CommonDto" resultMap="RoleResultMap">
+		select id, <include refid="columns"/>
+		from demo_system_role_resource
+		where 1 = 1
+		and is_delete = false
+		<if test="flexibleData.roleId!=null">
+			and role_id=#{flexibleData.roleId}
+		</if>
+		<if test="flexibleData.resourceId!=null">
+			and resource_id=#{flexibleData.resourceId}
+		</if>
+	</select>
+
+	<select id="findAllResRoles" resultMap="ResRoleMap">
+		select res.uri as uri, GROUP_CONCAT(role.role_id) as roles
+		from demo_system_resource res left outer join demo_system_role_resource role on (
+		res.id = role.resource_id
+		)
+		where res.is_delete = 0
+		and role.is_delete = 0
+		and res.uri is not null
+		group by res.uri
+	</select>
+
+</mapper>

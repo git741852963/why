@@ -1,0 +1,9 @@
+{{#partial "realTitle"}}500{{/partial}}
+{{#partial "realBody"}}
+    <div class="container-components">
+        {{#inject "mobile/common/error"}}
+            {"errorCode" : 500}
+        {{/inject}}
+    </div>
+{{/partial}}
+{{> views/error_layout}}

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user.user">
+
+	<resultMap id="UserMap" type="User">
+		<id property="id" column="id" />
+
+		<result property="parentId" column="parent_id" />
+		<result property="nick" column="nick" />
+		<result property="name" column="name" />
+		<result property="realName" column="real_name" />
+		<result property="password" column="password" />
+		<result property="phone" column="phone" />
+		<result property="mail" column="mail" />
+		<result property="birthday" column="birthday" />
+		<result property="idCardNum" column="id_card_num" />
+		<result property="gender" column="gender" />
+		<result property="type" column="type" />
+		<result property="isSuperMan" column="is_super_man" />
+		<result property="avatar" column="avatar" />
+		<result property="provinceId" column="province_id" />
+		<result property="cityId" column="city_id" />
+		<result property="regionId" column="region_id" />
+		<result property="address" column="address" />
+		<result property="isChild" column="is_child" />
+		<result property="status" column="status" />
+
+		<result property="isDelete" column="is_delete" />
+		<result property="createAt" column="create_at" />
+		<result property="updateAt" column="update_at" />
+	</resultMap>
+
+	<sql id="all_columns">
+		parent_id, nick, name, real_name, password, phone, mail, birthday, id_card_num, gender, type, is_super_man, avatar, province_id, city_id, region_id, address, is_child, status, is_delete, create_at, update_at
+	</sql>
+
+	<sql id="summary_columns">
+		parent_id, nick, name, real_name, phone, mail, gender, type, avatar, is_child, status, is_delete, create_at, update_at
+	</sql>
+
+	<sql id="console_create_columns">
+		nick, name, password, phone, type, is_super_man, avatar, is_child, status, is_delete, create_at, update_at
+	</sql>
+
+	<!-- 管理后台成员管理页面:查询成员数量 -->
+	<select id="count" parameterType="CommonDto" resultType="long">
+		SELECT COUNT(1)
+		FROM echuang_user
+		WHERE 1 = 1
+		AND is_delete = 0
+		AND is_super_man = 0
+		AND id != #{flexibleData.userId}
+		<if test="flexibleData.name!=null and flexibleData.name!=''">
+			AND name like concat('%',#{flexibleData.name},'%')
+		</if>
+		<if test="flexibleData.mobile!=null and flexibleData.mobile!=''">
+			AND phone like concat('%',#{flexibleData.mobile},'%')
+		</if>
+		<if test="flexibleData.type!=null and flexibleData.type!=''">
+			AND type = #{flexibleData.type}
+		</if>
+		<if test="flexibleData.exceptRoleTypes!=null">
+			AND type not IN
+			<foreach item="roleType" index="index" collection="flexibleData.exceptRoleTypes" open="("
+					 separator="," close=")">
+				#{roleType}
+			</foreach>
+		</if>
+	</select>
+
+	<!-- 管理后台成员管理页面:查询成员列表 -->
+	<select id="listUser" parameterType="CommonDto" resultMap="UserMap">
+		SELECT id, <include refid="summary_columns"/>
+		FROM echuang_user
+		WHERE 1 = 1
+		AND is_delete = 0
+		AND is_super_man = 0
+		AND id != #{flexibleData.userId}
+		<if test="flexibleData.name!=null and flexibleData.name!=''">
+			AND name like concat('%',#{flexibleData.name},'%')
+		</if>
+		<if test="flexibleData.mobile!=null and flexibleData.mobile!=''">
+			AND phone like concat('%',#{flexibleData.mobile},'%')
+		</if>
+		<if test="flexibleData.type!=null and flexibleData.type!=''">
+			AND type = #{flexibleData.type}
+		</if>
+		<if test="flexibleData.exceptRoleTypes!=null">
+			AND type not IN
+			<foreach item="roleType" index="index" collection="flexibleData.exceptRoleTypes" open="("
+					 separator="," close=")">
+				#{roleType}
+			</foreach>
+		</if>
+		limit #{pageInfo.offset}, #{pageInfo.limit}
+	</select>
+
+	<!-- 管理后台成员管理页面:创建成员 -->
+	<insert id="consoleCreate" useGeneratedKeys="true" keyProperty="id" parameterType="User">
+		insert into echuang_user (
+		<include refid="console_create_columns"/>
+		)
+		values (
+		#{nick},
+		#{name},
+		#{password},
+		#{phone},
+		#{type},
+		#{isSuperMan},
+		#{avatar},
+		0,
+		0,
+		0,
+		now(),
+		now()
+		)
+	</insert>
+
+	<!-- 管理后台成员管理页面:编辑成员，仅更新：昵称/用户名/密码/电话号码/头像 -->
+	<update id="consoleEdit" parameterType="User">
+		update echuang_user
+		set update_at = now(),
+		nick = #{nick},
+		name = #{name},
+		password = #{password},
+		phone = #{phone}
+		<if test="avatar!=null and avatar!=''">
+			,avatar = #{avatar}
+		</if>
+		where is_delete = false
+		and id = #{id}
+	</update>
+
+	<!-- 修改密码 -->
+	<update id="updatePassword" parameterType="User">
+		update echuang_user
+		set update_at = now(),
+		password = #{password}
+		where is_delete = false
+		and id = #{id}
+	</update>
+
+	<!-- 根据mobile查找用户 -->
+	<select id="findByMobile" parameterType="String" resultMap="UserMap">
+		SELECT id, <include refid="all_columns"/>
+		FROM echuang_user
+		WHERE 1 = 1
+		AND is_delete = false
+		AND phone = #{phone}
+	</select>
+
+	<!-- 根据用户名查找用户 -->
+	<select id="findByName" parameterType="String" resultMap="UserMap">
+		SELECT id, <include refid="all_columns"/>
+		FROM echuang_user
+		WHERE 1 = 1
+		AND is_delete = false
+		AND name = #{name}
+	</select>
+
+	<!-- 根据ID查找用户 -->
+	<select id="findById" parameterType="long" resultMap="UserMap">
+		SELECT id, <include refid="all_columns"/>
+		FROM echuang_user
+		WHERE 1 = 1
+		AND is_delete = false
+		AND id = #{id}
+	</select>
+
+	<!-- 删除用户 -->
+	<update id="delete" parameterType="long">
+		update echuang_user
+		set update_at = now(),
+			is_delete = true
+		where is_delete = false
+		and id = #{id}
+	</update>
+
+	<!-- 冻结用户 -->
+	<update id="frozen">
+		update echuang_user
+		set update_at = now(),
+			status = 1
+		where 1 = 1
+		and is_delete = false
+		and id in
+		<foreach item="id" index="index" collection="list" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 解冻用户 -->
+	<update id="unfrozen">
+		update echuang_user
+		set update_at = now(),
+		status = 0
+		where 1 = 1
+		and is_delete = false
+		and id in
+		<foreach item="id" index="index" collection="list" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+
+
+	<!-- 管理后台APP用户页面:查询成员数量 -->
+	<select id="appCount" parameterType="CommonDto" resultType="long">
+		SELECT COUNT(1)
+		FROM echuang_user
+		WHERE 1 = 1
+		AND is_delete = 0
+		AND type = 0
+		<if test="flexibleData.mobile!=null and flexibleData.mobile!=''">
+			AND phone like concat('%',#{flexibleData.mobile},'%')
+		</if>
+	</select>
+
+	<!-- 管理后台APP用户页面:查询成员列表 -->
+	<select id="appListUser" parameterType="CommonDto" resultMap="UserMap">
+		SELECT id, <include refid="summary_columns"/>
+		FROM echuang_user
+		WHERE 1 = 1
+		AND is_delete = 0
+		AND type = 0
+		<if test="flexibleData.mobile!=null and flexibleData.mobile!=''">
+			AND phone like concat('%',#{flexibleData.mobile},'%')
+		</if>
+		order by create_at DESC
+		limit #{pageInfo.offset}, #{pageInfo.limit}
+	</select>
+</mapper>

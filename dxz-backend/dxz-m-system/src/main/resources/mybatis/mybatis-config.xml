@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <!--TODO:包乱七八糟的，别的包的也引进来了，清理下-->
+        <!-- 文件 -->
+        <typeAlias alias="FileModel" type="com.neusoft.features.common.model.FileModel"/>
+        <!-- 地区 -->
+        <typeAlias alias="Address" type="com.neusoft.dxz.module.system.demo.model.Address"/>
+        <!-- 角色-资源 -->
+        <typeAlias alias="Resource" type="com.neusoft.dxz.module.system.demo.model.Resource"/>
+        <typeAlias alias="Role" type="com.neusoft.dxz.module.system.demo.model.Role"/>
+        <typeAlias alias="RoleResource" type="com.neusoft.dxz.module.system.demo.model.RoleResource"/>
+        <!-- 行业 -->
+        <typeAlias alias="Industry" type="com.neusoft.dxz.module.system.demo.model.Industry"/>
+    </typeAliases>
+</configuration>

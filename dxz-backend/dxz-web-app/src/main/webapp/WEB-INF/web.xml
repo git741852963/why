@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd"
+         id="dxz-web-app" version="3.1">
+
+    <!-- 1.display name -->
+    <display-name>dxz-web-app</display-name>
+    <description>web主站</description>
+
+    <!-- 2.session config -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <tracking-mode>COOKIE</tracking-mode>
+        <cookie-config>
+            <secure>false</secure>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
+
+    <!-- 3.context params -->
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>dxz.web.app.root</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:/spring/web-root-context.xml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>spring.profiles.active</param-name>
+        <param-value>${system.envrionment}</param-value>
+    </context-param>
+
+    <!-- 4.listeners -->
+    <!-- creates the spring container shared by all servlets and filters -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- logback config listener -->
+    <!--<listener>-->
+    <!--<listener-class>com.neusoft.ecommerce.core.log.LogbackConfigListener</listener-class>-->
+    <!--</listener>-->
+
+    <!-- 5.servlets -->
+    <!-- processes application requests -->
+    <servlet>
+        <servlet-name>appServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:/spring/web-site-context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>appServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- 6.filters -->
+    <!-- charactor encoding filter-->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <servlet-name>appServlet</servlet-name>
+    </filter-mapping>
+
+    <!-- session filter -->
+    <filter>
+        <filter-name>dxzSessionFilter</filter-name>
+        <filter-class>com.neusoft.features.session.DistributedSessionFilter</filter-class>
+        <init-param>
+            <param-name>sessionCookieName</param-name>
+            <param-value>${session.cookie.name}</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cookieDomain</param-name>
+            <param-value>${web.base.domain}</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>dxzSessionFilter</filter-name>
+        <servlet-name>appServlet</servlet-name>
+    </filter-mapping>
+
+    <!-- user behavior filter -->
+    <filter>
+        <filter-name>userBehaviorFilter</filter-name>
+        <filter-class>com.neusoft.dxz.web.misc.UserBehaviorFilter</filter-class>
+        <init-param>
+            <param-name>interceptRegex</param-name>
+            <param-value><![CDATA[(?<=/)[^/].*([/]$|[^/]$|\.(action|json|form|do|jsp|hbs|htm)$)]]></param-value>
+        </init-param>
+        <init-param>
+            <param-name>excludeRegex</param-name>
+            <param-value><![CDATA[(?<=/)[^/].*\.(html|js|css|png|jpg|gif|pdf|txt|zip)$]]></param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>userBehaviorFilter</filter-name>
+        <servlet-name>appServlet</servlet-name>
+    </filter-mapping>
+
+    <!-- http put|delete method support -->
+    <filter>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <servlet-name>appServlet</servlet-name>
+    </filter-mapping>
+</web-app>

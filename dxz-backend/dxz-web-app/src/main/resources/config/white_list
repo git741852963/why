@@ -1,0 +1,22 @@
+/api/user/login.json           :post
+/api/user/admin-login.json     :post
+/api/sys/check-update.json     :post
+/api/sys/base-info.json        :post
+
+/api/site/business-list.json   :post
+/api/site/business-details.json :post
+/api/activity/activities.json   :post
+/api/activity/past-activities.json  :post
+/api/activity/details.json      :post
+/api/collection/official.json   :post
+/api/message/list.json      :post
+
+/api/user/signup.json          :post
+/api/user/forgot-password.json :post
+/api/user/sms.json             :post
+/api/user/verify.json          :post
+/api/sys/guest-signin.json     :post
+
+/api/analysis/behavior.json    :post
+
+/share/activity      :get

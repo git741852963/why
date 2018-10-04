@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user.role">
+
+	<resultMap id="UserRoleMap" type="UserRole">
+		<id property="id" column="id" />
+
+		<result property="userId" column="user_id" />
+		<result property="roleId" column="role_id" />
+
+		<result property="isDelete" column="is_delete" />
+		<result property="createAt" column="create_at" />
+		<result property="updateAt" column="update_at" />
+	</resultMap>
+
+	<sql id="columns">
+		user_id, role_id, is_delete, create_at, update_at
+	</sql>
+
+	<select id="findRoleIdsByUserId" parameterType="long" resultType="long">
+		SELECT role_id
+		FROM echuang_user_role
+		WHERE 1 = 1
+		AND is_delete = 0
+		AND user_id = #{userId}
+	</select>
+
+	<!-- 删除用户在列表外的权限 -->
+	<update id="deleteOthers" parameterType="java.util.Map">
+		update echuang_user_role
+		set update_at = now(),
+			is_delete = true
+		where is_delete = false
+		and user_id = #{userId}
+		<if test="roleIds!=null">
+		and role_id not in
+			<foreach item="roleId" index="index" collection="roleIds" open="(" separator="," close=")">
+				#{roleId}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 批量插入角色 -->
+	<insert id="bulkInsert" parameterType="java.util.Map">
+		insert into echuang_user_role
+		(<include refid="columns"/>)
+		values
+		<foreach collection="roleIds" item="roleId" index="index" separator="," >
+			(#{userId}, #{roleId}, 0, now(), now())
+		</foreach>
+	</insert>
+
+</mapper>

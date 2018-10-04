@@ -1,0 +1,9 @@
+{{#partial "realTitle"}}404{{/partial}}
+{{#partial "realBody"}}
+    <div class="container-components">
+        {{#inject "mobile/common/error"}}
+            {"errorCode" : 404}
+        {{/inject}}
+    </div>
+{{/partial}}
+{{> views/error_layout}}

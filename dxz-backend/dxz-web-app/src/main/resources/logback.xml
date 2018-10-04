@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <property name="logRoot" value="${logback.log.home}" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 注意 logback 的括号需要转义 -->
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%-5level %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SQL_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 注意 logback 的括号需要转义 -->
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss} %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份)-->
+    <!--<appender name="SizeBasedFileApppender" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--<file>${logRoot}/app-roll.log</file>-->
+    <!--<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">-->
+    <!--<FileNamePattern>app-roll.log.%i.bak</FileNamePattern>-->
+    <!--<MinIndex>1</MinIndex>-->
+    <!--<MaxIndex>12</MaxIndex>-->
+    <!--</rollingPolicy>-->
+    <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+    <!--<MaxFileSize>20MB</MaxFileSize>-->
+    <!--</triggeringPolicy>-->
+    <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
+    <!--<Pattern>%-5level %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %msg%n</Pattern>-->
+    <!--</layout>-->
+    <!--</appender>-->
+
+    <appender name="WebLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logRoot}/app.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%-5level %date [%thread] %logger{10} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${logRoot}/app-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ErrorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logRoot}/app-error.log</file>
+        <!-- 过滤器，只记录ERROR级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%-5level %date [%thread] %logger{10} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${logRoot}/app-error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- show parameters for hibernate sql -->
+    <!--<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />-->
+    <!--<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG" />-->
+    <!--<logger name="org.hibernate.SQL" level="DEBUG" />-->
+    <!--<logger name="org.hibernate.engine.QueryParameters" level="DEBUG" />-->
+    <!--<logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG" />-->
+
+    <!-- mybatis log configure -->
+    <!--<logger name="com.apache.ibatis" level="DEBUG"/>-->
+    <!--<logger name="jdbc.sqltiming" level="DEBUG"/>-->
+    <!--<logger name="java.sql.Connection" level="DEBUG"/>-->
+    <!--<logger name="java.sql.Statement" level="DEBUG"/>-->
+    <!--<logger name="java.sql.PreparedStatement" level="DEBUG"/>-->
+
+    <!-- API接口调用日志 -->
+    <logger name="com.neusoft.features.log.LogAspect" level="${logback.log.sql.level}"/>
+
+    <!-- 打印SQL, 设置为TRACE显示SQL输出 -->
+    <logger name="aj4g" level="${logback.log.sql.level}" additivity="false">
+        <appender-ref ref="SQL_STDOUT" />
+    </logger>
+
+    <root>
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="WebLogAppender" />
+        <appender-ref ref="ErrorAppender" />
+        <level value="${logback.log.level}" />
+    </root>
+
+</configuration>

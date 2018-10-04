@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.address">
+
+    <resultMap id="AddressResultMap" type="Address">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="level" column="level"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <sql id="columns">
+        id, parent_id, name, level, is_delete, create_at, update_at
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Address" flushCache="true">
+        insert into demo_base_address (
+        <include refid="columns"/>
+        ) values(
+        #{id},
+        #{parentId},
+        #{name},
+        #{level},
+        0,
+        now(),
+        now()
+        )
+    </insert>
+
+    <update id="update" parameterType="Address">
+        update demo_base_address
+        set
+        update_at= now()
+        <if test="name != null">
+            ,name=#{name}
+        </if>
+        where
+        id=#{id}
+    </update>
+
+    <update id="updateSort" parameterType="Address">
+        UPDATE
+            demo_base_address
+        SET
+            update_at= now(),
+            <if test="sort != null">
+                ,sort=#{sort}
+            </if>
+        WHERE
+            id=#{id}
+    </update>
+
+    <update id="deleteById" parameterType="Long">
+        update demo_base_address
+        set
+        update_at= now()
+        <if test="isDelete != null">
+            ,is_delete=#{isDelete}
+        </if>
+        where
+        id=#{id}
+    </update>
+
+    <select id="findById" parameterType="Long" resultMap="AddressResultMap">
+        SELECT
+        <include refid="columns"/>
+        FROM
+            demo_base_address
+        WHERE
+        is_delete = 0
+        and id = #{id}
+    </select>
+
+    <select id="isExist" parameterType="Address" resultType="Long">
+        SELECT count(1)
+        FROM
+            demo_base_address
+        WHERE
+        is_delete = 0
+        and parent_id = #{parentId}
+        and name = #{name}
+        order by id
+    </select>
+
+    <select id="findByParentId" parameterType="long" resultMap="AddressResultMap">
+        select
+            <include refid="columns"/>
+        from
+            demo_base_address
+        where
+            is_delete = 0
+            and parent_id = #{parentId}
+        order by id
+    </select>
+
+    <select id="selectAddressById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select
+            t1.id as province_id,
+            t1.name as province_name,
+            t2.id as city_id,
+            t2.name as city_name,
+            t3.id as region_id,
+            t3.name as region_name
+        from
+            (select id,name from demo_base_address where id = #{provinceId}) t1
+            inner join (select id,name from demo_base_address where id = #{cityId}) t2
+            inner join (select id,name from demo_base_address where id = #{regionId}) t3
+    </select>
+
+</mapper>

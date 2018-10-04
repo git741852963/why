@@ -1,0 +1,27 @@
+#
+# typical syntax
+# auths:
+#   - url: /magic/url
+#     types:
+#       - BIG_BROTHER
+#       - BIG_SISTER
+#     roles:
+#       - BOSS
+#       - WTF
+#
+auths:
+  - url : /api/user
+    types:
+      - MANAGER
+      - USER
+      - COMPANY
+      - CONTRACTOR
+      - ADSP
+
+  - url : /api/search
+    types:
+       - ALL
+
+  - url : /api/user/current
+    types:
+       - ALL

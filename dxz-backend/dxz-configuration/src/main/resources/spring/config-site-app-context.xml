@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- controller包扫描 -->
+    <context:component-scan base-package="com.neusoft.dxz.web"/>
+
+    <!-- springMVC driven -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <!-- 避免出现乱码 -->
+                <constructor-arg value="UTF-8" index="0"></constructor-arg>
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/plain;charset=UTF-8</value>
+                        <!-- 避免IE出现下载JSON文件的情况 -->
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/json;charset=UTF-8</value>
+                        <!-- 避免IE出现下载JSON文件的情况 -->
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>application/x-www-form-urlencoded;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+            <!--<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">-->
+            <!--<property name="supportedMediaTypes">-->
+            <!--<list>-->
+            <!--<value>text/json;charset=UTF-8</value>-->
+            <!--&lt;!&ndash; 避免IE出现下载JSON文件的情况 &ndash;&gt;-->
+            <!--<value>text/html;charset=UTF-8</value>-->
+            <!--<value>application/json;charset=UTF-8</value>-->
+            <!--</list>-->
+            <!--</property>-->
+            <!--<property name="features">-->
+            <!--<list>-->
+            <!--&lt;!&ndash; <value>WriteMapNullValue</value> &ndash;&gt;-->
+            <!--<value>QuoteFieldNames</value>-->
+            <!--<value>WriteDateUseDateFormat</value>-->
+            <!--</list>-->
+            <!--</property>-->
+            <!--</bean>-->
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 页面路径映射 -->
+    <bean class="com.neusoft.features.api.annotation.ApiRequestMappingHandlerMapping">
+        <property name="defaultHandler" ref="renderMappingHandler"/>
+        <property name="supportApiMinVersion" value="1.0" />
+    </bean>
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/plain;charset=UTF-8</value>
+                            <value>text/html;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html;charset=UTF-8</value>
+                            <value>application/json;charset=UTF-8</value>
+                            <value>application/x-www-form-urlencoded; charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 对静态资源文件的访问 -->
+    <mvc:resources mapping="/views/**" location="/views/"/>
+
+    <!-- 支持国际化 -->
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+        <property name="defaultLocale" value="cn"/>
+    </bean>
+
+    <!-- 国际化消息资源 -->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath*:/i18n/messages.properties</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="3600">
+        </property>
+        <property name="useCodeAsDefaultMessage" value="true"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <!-- 支持上传文件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize">
+            <!-- 文件上传最大为2M -->
+            <value>2097152</value>
+        </property>
+        <property name="maxInMemorySize" value="4096"/>
+    </bean>
+
+    <!-- log aop -->
+    <!--<aop:aspectj-autoproxy proxy-target-class="true" />-->
+    <bean id="logAspect" class="com.neusoft.features.log.LogAspect">
+        <property name="writeLogByAnnotation" value="false" />
+    </bean>
+
+    <!-- Controller Log AOP -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <aop:config proxy-target-class="true">
+        <aop:aspect id="apiLogAOP" ref="logAspect">
+            <aop:pointcut id="apiLogPointCut"
+                          expression="execution(public * com.neusoft.dxz.web.api..*.*(..))"/>
+            <aop:around method="MethodCallLog" pointcut-ref="apiLogPointCut"/>
+        </aop:aspect>
+    </aop:config>
+
+    <!-- 全局异常处理 -->
+    <bean class="com.neusoft.dxz.web.misc.DxzExceptionResolver">
+        <property name="order" value="0"/>
+        <!-- 定义默认的异常处理页面，当该异常类型的注册时使用 -->
+        <!--<property name="defaultErrorView" value="resource:500"/>-->
+    </bean>
+
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <!-- 检测请求中的lang参数并且改变地区信息 -->
+        <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+            <property name="paramName" value="lang"/>
+        </bean>
+        <!-- 多个拦截器,顺序执行 -->
+        <bean id="webContentInterceptor"
+              class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+            <!-- 缓存过期时间，正数表示需要缓存，负数表示不做任何事情（也就是说保留上次的缓存设置） -->
+            <property name="cacheSeconds" value="-1"/>
+            <property name="useExpiresHeader" value="true"/>
+            <!-- 是否使用HTTP1.0协议过期响应头：如果true则会在响应头添加：“Expires：”；需要配合cacheSeconds使用； -->
+            <property name="useCacheControlHeader" value="true"/>
+            <!-- 是否使用HTTP 1.1协议的缓存控制响应头，如果true则会在响应头添加；需要配合cacheSeconds使用；该设置是防止Firefox缓存 -->
+            <property name="useCacheControlNoStore" value="true"/>
+        </bean>
+        <!-- 处理登录用户信息放入UserHolder供dubbo使用 -->
+        <bean id="loginInterceptor" class="com.neusoft.dxz.web.security.interceptors.ApiLoginInterceptor">
+        </bean>
+        <!-- User Security Interceptor -->
+        <bean id="authInterceptor" class="com.neusoft.dxz.web.security.interceptors.AuthInterceptor">
+        </bean>
+    </mvc:interceptors>
+
+</beans>

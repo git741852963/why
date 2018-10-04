@@ -1,0 +1,11 @@
+copy ./dxz-configuration/src/main/filters/dev-example.properties ./dxz-configuration/src/main/filters/dev.properties
+copy ./dxz-m-activity/src/main/filters/dev-example.properties ./dxz-m-activity/src/main/filters/dev.properties
+copy ./dxz-m-article/src/main/filters/dev-example.properties ./dxz-m-article/src/main/filters/dev.properties
+copy ./dxz-m-finance/src/main/filters/dev-example.properties ./dxz-m-finance/src/main/filters/dev.properties
+copy ./dxz-m-goods/src/main/filters/dev-example.properties ./dxz-m-goods/src/main/filters/dev.properties
+copy ./dxz-m-message/src/main/filters/dev-example.properties ./dxz-m-message/src/main/filters/dev.properties
+copy ./dxz-m-system/src/main/filters/dev-example.properties ./dxz-m-system/src/main/filters/dev.properties
+copy ./dxz-m-trade/src/main/filters/dev-example.properties ./dxz-m-trade/src/main/filters/dev.properties
+copy ./dxz-m-user/src/main/filters/dev-example.properties ./dxz-m-user/src/main/filters/dev.properties
+copy ./dxz-m-scheduler/src/main/filters/dev-example.properties ./dxz-m-scheduler/src/main/filters/dev.properties
+copy ./dxz-web-app/src/main/filters/dev-example.properties ./dxz-web-app/src/main/filters/dev.properties

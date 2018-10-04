@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.industry">
+    
+    <resultMap id="IndustryMap" type="Industry">
+        <id property="id" column="id"/>
+
+        <result property="name" column="name"/>
+        <result property="ver" column="ver"/>
+
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+    
+    <sql id="columns">
+        id, name, ver, create_at, update_at, is_delete
+    </sql>
+
+    <select id="all" resultMap="IndustryMap">
+        select <include refid="columns"/>
+        from demo_base_industry
+        where is_delete = 0
+    </select>
+
+    <select id="findById" parameterType="Long" resultMap="IndustryMap">
+        select <include refid="columns"/>
+        from demo_base_industry
+        where id = #{id}
+        and is_delete = 0
+    </select>
+
+</mapper>

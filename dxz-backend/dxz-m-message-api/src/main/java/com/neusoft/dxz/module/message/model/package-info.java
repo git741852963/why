@@ -1,0 +1,1 @@
+package com.neusoft.dxz.module.message.model;

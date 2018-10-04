@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.file">
+
+    <resultMap id="FileResultMap" type="FileModel">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="fileCategory" column="file_category"/>
+        <result property="fileOriginalName" column="file_original_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileThumbPath" column="file_thumb_path"/>
+        <result property="fileServerName" column="file_server_name"/>
+        <result property="businessId" column="business_id"/>
+        <result property="modelType" column="model_type"/>
+        <result property="fileExtension" column="file_extension"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <sql id="columns">
+        user_id, file_category, file_original_name, file_path, file_thumb_path, model_type, file_server_name,business_id, file_extension, file_size, is_delete, create_at, update_at
+    </sql>
+
+    <sql id="whereCondition">
+        and user_id = #{userId}
+        <if test="category!=null and category!=''">
+            and file_category = #{category}
+        </if>
+        <if test="fileName!=null and fileName!=''">
+            and file_original_name like CONCAT('%',#{fileName},'%')
+        </if>
+        <if test="startDate!=null and startDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') >= DATE_FORMAT(#{startDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
+        </if>
+    </sql>
+
+    <sql id="xyzWhereCondition">
+        <if test="category!=null and category!=''">
+            and file_category = #{category}
+        </if>
+        <if test="fileName!=null and fileName!=''">
+            and file_original_name like CONCAT('%',#{fileName},'%')
+        </if>
+        <if test="startDate!=null and startDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') >= DATE_FORMAT(#{startDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="businessId!=null and businessId!=''">
+            and (business_id = #{businessId} or business_id is null)
+        </if>
+        <if test="businessId==null or businessId==''">
+            and business_id is null
+        </if>
+        <if test="modelType!=null and modelType!=''">
+            and model_type = #{modelType}
+        </if>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="FileModel">
+        insert into demo_system_upload_files (
+        <include refid="columns"/>
+        )
+        values (
+        #{userId},
+        #{fileCategory},
+        #{fileOriginalName},
+        #{filePath},
+        #{fileThumbPath},
+        #{modelType},
+        #{fileServerName},
+        #{businessId},
+        #{fileExtension},
+        #{fileSize},
+        #{isDelete},
+        #{createAt},
+        #{updateAt}
+        )
+    </insert>
+
+    <update id="update" parameterType="FileModel">
+		update demo_system_upload_files
+		set
+            user_id = #{userId},
+            file_category = #{fileCategory},
+            file_original_name = #{fileOriginalName},
+            file_path = #{filePath},
+            file_thumb_path = #{fileThumbPath},
+            model_type = #{modelType},
+            file_server_name = #{fileServerName},
+            file_extension = #{fileExtension},
+            file_size = #{fileSize},
+            is_delete = #{isDelete},
+            update_at = #{updateAt}
+		where
+		    id = #{id}
+	</update>
+
+    <update id="deleteById" parameterType="long">
+		update demo_system_upload_files
+		set
+		    is_delete = 1,
+		    update_at = now()
+		where
+		    id = #{id}
+	</update>
+
+    <select id="findById" parameterType="FileModel" resultMap="FileResultMap">
+        select id,
+        <include refid="columns"/>
+        from system_upload_files
+        where id = #{id}
+    </select>
+
+    <select id="findByCondition" parameterType="FileModel" resultMap="FileResultMap">
+        select
+        <include refid="columns"/>
+        from system_upload_files
+        where
+        user_id=#{userId}
+        and is_delete = 0
+    </select>
+
+    <update id="deleteByCondition" parameterType="CommonDto">
+        update demo_system_upload_files
+        set
+        is_delete = #{flexibleData.isDelete},
+        update_at = #{flexibleData.updateAt}
+        where 1 = 1
+        <if test="flexibleData.userId!=null and flexibleData.userId!=''">
+            and user_id = #{flexibleData.userId}
+        </if>
+        <if test="flexibleData.imageIds!=null">
+            and id in
+            <foreach item="imageId" index="index" collection="flexibleData.imageIds" open="(" separator="," close=")">
+                #{imageId}
+            </foreach>
+        </if>
+    </update>
+
+    <update id="deleteByFileName" parameterType="CommonDto">
+        update demo_system_upload_files
+        set
+        is_delete = 1,
+        update_at = now()
+        where is_delete = 0
+        <if test="flexibleData.fileNames!=null">
+            and file_server_name in
+            <foreach item="fileName" index="index" collection="flexibleData.fileNames" open="(" separator="," close=")">
+                #{fileName}
+            </foreach>
+        </if>
+    </update>
+
+    <!--<select id="paging" parameterType="map" resultMap="FileResultMap">-->
+        <!--select IF(char_length(left(file_original_name, char_length(file_original_name)-4)) >-->
+        <!--10, <include refid="columns"/>,-->
+        <!--left(left(file_original_name, char_length(file_original_name)-3), 10),-->
+        <!--left(file_original_name, char_length(file_original_name)-4)) as subFileOriginalName,-->
+        <!--from system_upload_files-->
+        <!--where is_delete = 0-->
+        <!--<include refid="whereCondition"/>-->
+        <!--order by create_at desc limit #{offset}, #{size}-->
+    <!--</select>-->
+
+    <select id="paging" parameterType="map" resultMap="FileResultMap">
+        select id, <include refid="columns"/>
+        from demo_system_upload_files
+        where is_delete = 0
+        <include refid="whereCondition"/>
+        order by create_at desc limit #{offset}, #{size}
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        select count(1)
+        from demo_system_upload_files
+        where is_delete = 0
+        <include refid="whereCondition"/>
+    </select>
+
+    <select id="xyzpaging" parameterType="map" resultMap="FileResultMap">
+        select id, <include refid="columns"/>
+        from demo_system_upload_files
+        where is_delete = 0
+        <include refid="xyzWhereCondition"/>
+        order by create_at desc limit #{offset}, #{size}
+    </select>
+
+    <select id="xyzcount" parameterType="map" resultType="long">
+        select count(1)
+        from demo_system_upload_files
+        where is_delete = 0
+        <include refid="xyzWhereCondition"/>
+    </select>
+
+    <update id="updateBusinessId" parameterType="map">
+        update demo_system_upload_files
+        set
+        business_id = #{id},
+        update_at = now()
+        where is_delete = 0
+        <if test="fileIds!=null">
+            and id in
+            <foreach item="fileid" index="index" collection="fileIds" open="(" separator="," close=")">
+                #{fileid}
+            </foreach>
+        </if>
+    </update>
+    <!-- and user_id = #{userId} -->
+
+    <select id="xyzcountMedia" parameterType="map" resultType="long">
+        select count(1)
+        from demo_system_upload_files
+        where is_delete = 0
+        <if test="category!=null and category!=''">
+            and file_category = #{category}
+        </if>
+        <if test="fileName!=null and fileName!=''">
+            and file_original_name like CONCAT('%',#{fileName},'%')
+        </if>
+        <if test="startDate!=null and startDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') >= DATE_FORMAT(#{startDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="businessId!=null and businessId!=''">
+            and (business_id = #{businessId} or business_id is null)
+        </if>
+        <if test="modelType!=null and modelType!=''">
+            and model_type = #{modelType}
+        </if>
+        <if test="businessIdList!=null">
+            and business_id in
+            <foreach item="fileid" index="index" collection="businessIdList" open="(" separator="," close=")">
+                #{fileid}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="xyzpagingMedia" parameterType="map" resultMap="FileResultMap">
+        select id, <include refid="columns"/>
+        from demo_system_upload_files
+        where is_delete = 0
+        <if test="category!=null and category!=''">
+            and file_category = #{category}
+        </if>
+        <if test="fileName!=null and fileName!=''">
+            and file_original_name like CONCAT('%',#{fileName},'%')
+        </if>
+        <if test="startDate!=null and startDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') >= DATE_FORMAT(#{startDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and <![CDATA[DATE_FORMAT(create_at, '%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="businessId!=null and businessId!=''">
+            and (business_id = #{businessId} or business_id is null)
+        </if>
+        <if test="modelType!=null and modelType!=''">
+            and model_type = #{modelType}
+        </if>
+        <if test="businessIdList!=null">
+            and business_id in
+            <foreach item="fileid" index="index" collection="businessIdList" open="(" separator="," close=")">
+                #{fileid}
+            </foreach>
+        </if>
+        order by create_at desc
+        limit #{offset}, #{size}
+    </select>
+
+    <update id="updateByVideoId" parameterType="map">
+        update demo_system_upload_files
+        set
+        file_path = #{playURL},
+        file_thumb_path = #{coverURL},
+        update_at = now()
+        where is_delete = 0
+        and file_server_name = #{videoId}
+    </update>
+
+    <update id="updateFileUrlByVodId" parameterType="map">
+        update demo_system_upload_files
+        set
+        file_path = #{playUrl}
+        update_at = now()
+        where is_delete = 0
+        and file_server_name = #{videoId}
+    </update>
+
+    <update id="updateCoverUrlByVodId" parameterType="map">
+        update demo_system_upload_files
+        set
+        file_thumb_path = #{coverUrl}
+        update_at = now()
+        where is_delete = 0
+        and file_server_name = #{videoId}
+    </update>
+</mapper>

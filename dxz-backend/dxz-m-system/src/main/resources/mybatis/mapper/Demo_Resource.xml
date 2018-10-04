@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.resource">
+
+    <resultMap id="ResourceMap" type="Resource">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="uri" column="uri"/>
+        <result property="category" column="category"/>
+        <result property="level" column="level"/>
+        <result property="display" column="display"/>
+        <result property="avatar" column="avatar"/>
+        <result property="sidebarShow" column="sidebar_show"/>
+        <result property="showNodeId" column="show_node_id"/>
+        <result property="showParentNodeId" column="show_parent_node_id"/>
+        <result property="showNodePath" column="showNodePath"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <sql id="columns">
+      parent_id, name, description, uri, category, level, display, avatar, sidebar_show, show_node_id, show_parent_node_id, is_delete, create_at, update_at
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Resource">
+		insert into demo_system_resource (
+            <include refid="columns"/>
+		)
+		values (
+            #{parentId},
+            #{name},
+            #{description},
+            #{uri},
+            #{category},
+            #{level},
+            #{display},
+            #{avatar},
+            #{sidebarShow},
+            #{showNodeId},
+            #{showParentNodeId},
+            0,
+            now(),
+            now()
+		)
+	</insert>
+
+    <update id="update" parameterType="Resource">
+		update demo_system_resource
+		set
+            parent_id=#{parentId},
+            name=#{name},
+            description=#{description},
+            uri=#{uri},
+            category=#{category},
+            level=#{level},
+            display=#{display},
+            avatar=#{avatar},
+            sidebar_show = #{sidebarShow},
+            show_node_id = #{showNodeId},
+            show_parent_node_id = #{showParentNodeId},
+            is_delete=#{isDelete},
+		    update_at=now()
+		where
+		    id=#{id}
+	</update>
+
+    <update id="delete" parameterType="Resource">
+		update demo_system_resource
+		set
+            is_delete = 1,
+            update_at=#{updateAt}
+		where
+            id=#{id}
+            or parent_id=#{id}
+	</update>
+
+    <select id="selectOne" parameterType="CommonDto" resultMap="ResourceMap">
+        select id, <include refid="columns"/>
+        from demo_system_resource
+        where is_delete = 0
+        <if test="flexibleData.category!=null">
+            and category=#{flexibleData.category}
+        </if>
+        <if test="flexibleData.name!=null">
+            and name=#{flexibleData.name}
+        </if>
+        <if test="flexibleData.uri!=null">
+            and uri=#{flexibleData.uri}
+        </if>
+        <if test="flexibleData.parentId!=null">
+            and parent_id=#{flexibleData.parentId}
+        </if>
+        limit 1
+    </select>
+
+    <select id="selectList" parameterType="CommonDto" resultMap="ResourceMap">
+        select id, <include refid="columns"/>
+        from demo_system_resource
+        where is_delete = 0
+        <if test="flexibleData.category!=null">
+            and category=#{flexibleData.category}
+        </if>
+        <if test="flexibleData.level!=null">
+            and level=#{flexibleData.level}
+        </if>
+        <if test="flexibleData.parentId!=null">
+            and parent_id=#{flexibleData.parentId}
+        </if>
+        <if test="flexibleData.sidebarShow!=null">
+            and sidebar_show=#{flexibleData.sidebarShow}
+        </if>
+        order by display
+    </select>
+
+    <select id="max" parameterType="CommonDto" resultType="java.lang.Long">
+        select max(display) from demo_system_resource
+        where is_delete = 0
+        <if test="flexibleData.category!=null">
+            and category=#{flexibleData.category}
+        </if>
+        <if test="flexibleData.level!=null">
+            and level=#{flexibleData.level}
+        </if>
+        <if test="flexibleData.parentId!=null">
+            and parent_id=#{flexibleData.parentId}
+        </if>
+    </select>
+
+    <select id="count" parameterType="CommonDto" resultType="java.lang.Long">
+        select count(1) from demo_system_resource
+        where is_delete = 0
+        <if test="flexibleData.category!=null">
+            and category=#{flexibleData.category}
+        </if>
+        <if test="flexibleData.level!=null">
+            and level=#{flexibleData.level}
+        </if>
+        <if test="flexibleData.parentId!=null">
+            and parent_id=#{flexibleData.parentId}
+        </if>
+    </select>
+
+    <select id="all" resultMap="ResourceMap">
+        select t1.*, t2.uri as showNodePath
+        from demo_system_resource t1
+        left join system_resource t2 on (
+            t1.id = t2.show_node_id
+            and t2.is_delete = 0
+        )
+        where t1.is_delete = 0
+            and t1.sidebar_show = 1
+            and t1.level = 1
+            and t1.category = 0
+        order by t1.display, t1.id
+    </select>
+
+    <select id="findTopLevelResources" parameterType="java.lang.Integer" resultMap="ResourceMap">
+        select id, <include refid="columns"/>
+        from demo_system_resource
+        where
+            is_delete = 0
+            and level = 0
+            and category=#{category}
+            order by display
+    </select>
+
+    <select id="findResourcesByRoleId" parameterType="String" resultMap="ResourceMap">
+        select sr.*, sr_hidden.uri as showNodePath
+        from demo_system_role_resource srr
+        inner join demo_system_resource sr on (
+            srr.resource_id = sr.id
+        )
+        left join demo_system_resource sr_hidden on (
+            sr.id = sr_hidden.show_node_id
+            and sr_hidden.is_delete = 0
+            and sr_hidden.sidebar_show = 0
+        )
+        where
+            srr.is_delete = 0
+            and sr.is_delete = 0
+            and sr.sidebar_show = 1
+            and srr.role_id in
+            <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        order by sr.display, sr.id
+    </select>
+</mapper>

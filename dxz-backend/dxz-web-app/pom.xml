@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016 aj4g -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.neusoft</groupId>
+        <artifactId>dxz</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>${module.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <packaging>war</packaging>
+    <name>${module.artifactId}</name>
+    <description>大学长</description>
+
+    <properties>
+        <module.artifactId>dxz-web-app</module.artifactId>
+    </properties>
+
+    <dependencies>
+        <!-- framework -->
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-core-session</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-core-search</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>netty</artifactId>
+                    <groupId>io.netty</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-core-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-core-api-support</artifactId>
+        </dependency>
+
+        <!-- modules -->
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-system-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-user-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-article-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-message-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-goods-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-activity-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-trade-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-finance-api</artifactId>
+        </dependency>
+
+        <!-- shedule tasks -->
+        <dependency>
+            <groupId>com.neusoft</groupId>
+            <artifactId>dxz-m-scheduler</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>netty</artifactId>
+                    <groupId>io.netty</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+
+        <!-- spring mvc jar -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <!-- mybatis -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+        </dependency>
+
+        <!-- mybatis spring -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+        </dependency>
+
+        <!-- mysql-connector-java jar -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!-- database connection pool -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>commons-pool</groupId>-->
+        <!--<artifactId>commons-pool</artifactId>-->
+        <!--</dependency>-->
+
+        <!-- handlebars -->
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
+        </dependency>
+
+        <!-- file upload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <!-- json web token -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
+
+        <!-- aliyun OSS VOD -->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun.oss</groupId>-->
+            <!--<artifactId>aliyun-sdk-oss</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-sdk-sts</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-sdk-core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-sdk-vod</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-vod-upload</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>jdom</groupId>
+            <artifactId>jdom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ezmorph</groupId>
+            <artifactId>ezmorph</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <!-- aliyun OSS VOD -->
+
+        <!-- dozer -->
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+        </dependency>
+
+        <!-- web container provided: servlet-api, use tomcat, not this -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- aliyun  -->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun.oss</groupId>-->
+            <!--<artifactId>aliyun-sdk-oss</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-sdk-sts</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-sdk-core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-sdk-vod</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aliyun</groupId>-->
+            <!--<artifactId>aliyun-java-vod-upload</artifactId>-->
+        <!--</dependency>-->
+
+    </dependencies>
+
+    <build>
+        <finalName>${module.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <filters>
+            <filter>src/main/filters/${build.env}.properties</filter>
+        </filters>
+        <plugins>
+            <!-- resource -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <!-- packaging -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <!-- 元配置文件的目录，相对于pom.xml文件的路径 -->
+                            <directory>src/main/webapp/WEB-INF</directory>
+                            <!-- 是否过滤文件，也就是是否启动auto-config的功能 -->
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>*.xml</include>
+                            </includes>
+                            <!-- 目标路径 -->
+                            <targetPath>WEB-INF</targetPath>
+                        </resource>
+                    </webResources>
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>jrebel-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <path>/</path>
+                    <port>8081</port>
+                    <uriEncoding>UTF-8</uriEncoding>
+                    <contextReloadable>true</contextReloadable>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-system</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-user</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-article</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-message</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-goods</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-activity</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-trade</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-finance</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>9.4.11.v20180605</version>
+                        <configuration>
+                            <scanIntervalSeconds>5</scanIntervalSeconds>
+                            <webApp>
+                                <contextPath>/</contextPath>
+                            </webApp>
+                            <httpConnector>
+                                <port>9090</port>
+                                <idleTimeout>60000</idleTimeout>
+                            </httpConnector>
+                            <contextHandlers>
+                                <contextHandler
+                                        implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+                                    <war>${project.basedir}/target/dxz-web-app.war</war>
+                                    <contextPath>/</contextPath>
+                                </contextHandler>
+                            </contextHandlers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>jetty-start</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run-war</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>uat</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-system</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-user</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-article</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-message</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-goods</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-activity</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-trade</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-finance</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>pre</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-system</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-user</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-article</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-message</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-goods</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-activity</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-trade</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-finance</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-system</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-user</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-article</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-message</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-goods</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-activity</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-trade</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.neusoft</groupId>
+                    <artifactId>dxz-m-finance</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+</project>

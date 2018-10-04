@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.role">
+
+	<resultMap id="RoleResultMap" type="Role">
+		<id property="id" column="role_id" />
+
+		<result property="name" column="name" />
+		<result property="category" column="category" />
+		<result property="isDefault" column="is_default" />
+		<result property="description" column="description" />
+
+		<result property="isDelete" column="is_delete" />
+		<result property="createAt" column="create_at" />
+		<result property="updateAt" column="update_at" />
+	</resultMap>
+	
+	<sql id="columns">
+		name, category, is_default, description, is_delete, create_at, update_at
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Role" flushCache="true">
+		insert demo_system_role
+		(
+			<include refid="columns"/>
+		)
+		values
+		(
+			#{name},
+			#{category},
+			#{isDefault},
+			#{description},
+			0,
+			now(),
+			now()
+		)
+	</insert>
+
+	<update id="update" parameterType="Role">
+		update demo_system_role
+		set
+			name=#{name},
+			category=#{category},
+			is_default=#{isDefault},
+			description=#{description},
+			is_delete=#{isDelete},
+			update_at=now()
+		where
+			id=#{id}
+	</update>
+
+	<update id="updateDefaultOthers" parameterType="Role">
+		update demo_system_role
+		set
+			is_default=#{isDefault},
+			update_at=now()
+		where
+			category=#{category}
+			and id!=#{id}
+	</update>
+
+	<delete id="delete" parameterType="Role">
+		update demo_system_role
+		set is_delete = 1
+		WHERE id=#{id}
+	</delete>
+
+	<select id="selectOne" parameterType="CommonDto" resultMap="RoleResultMap">
+		SELECT id, <include refid="columns"/>
+		FROM demo_system_role
+		WHERE 1 = 1
+		AND is_delete = 0
+		<!--TODO:roleId? -->
+		<if test="flexibleData.roleId != null">
+			AND id = #{flexibleData.roleId}
+		</if>
+	</select>
+
+	<select id="selectList" parameterType="CommonDto" resultMap="RoleResultMap">
+		SELECT id, <include refid="columns"/>
+		FROM demo_system_role
+		WHERE 1 = 1
+		AND is_delete = 0
+		<if test="flexibleData.category!=null">
+			AND category=#{flexibleData.category}
+		</if>
+		<if test="flexibleData.isDefault != null">
+			AND is_default = #{flexibleData.isDefault}
+		</if>
+		<if test="flexibleData.name != null">
+			AND name = #{flexibleData.name}
+		</if>
+		<if test="flexibleData.excludeId != null">
+			AND id != #{flexibleData.excludeId}
+		</if>
+		ORDER BY create_at DESC
+	</select>
+
+	<select id="findByIds" resultMap="RoleResultMap">
+		select id, <include refid="columns"/>
+		from demo_system_role
+		where is_delete = false
+		and id in
+		<foreach item="roleId" index="index" collection="list" open="("
+				 separator="," close=")">
+			#{roleId}
+		</foreach>
+	</select>
+
+	<select id="findById" resultMap="RoleResultMap">
+		select id, <include refid="columns"/>
+		from demo_system_role
+		where is_delete = false
+		and id = #{id}
+	</select>
+
+	<select id="selectRoleNames" resultType="java.lang.String">
+		select name
+		from demo_system_role
+		where is_delete = 0
+		and id in
+		<foreach item="roleId" index="index" collection="list" open="("
+			separator="," close=")">
+			#{roleId}
+		</foreach>
+	</select>
+
+	<select id="selectStoreRoles" resultMap="RoleResultMap">
+		select id, <include refid="columns"/>
+		from demo_system_role
+		where is_delete = false
+		and category = 1
+		and is_default = 0
+	</select>
+</mapper>
